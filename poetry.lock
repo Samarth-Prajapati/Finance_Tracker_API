@@ -393,6 +393,21 @@ test = ["importlib-metadata (>=7.0) ; python_version < \"3.13\"", "pytest (>=8.2
 zstd = ["backports-zstd (>=1.0.0) ; python_version < \"3.14\""]
 
 [[package]]
+name = "python-dotenv"
+version = "1.2.1"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "python_dotenv-1.2.1-py3-none-any.whl", hash = "sha256:b81ee9561e9ca4004139c6cbba3a238c32b03e4894671e181b671e8cb8425d61"},
+    {file = "python_dotenv-1.2.1.tar.gz", hash = "sha256:42667e897e16ab0d66954af0e60a9caa94f0fd4ecf3aaf6d2d260eec1aa36ad6"},
+]
+
+[package.extras]
+cli = ["click (>=5.0)"]
+
+[[package]]
 name = "starlette"
 version = "0.52.1"
 description = "The little ASGI library that shines."
@@ -459,4 +474,4 @@ standard = ["colorama (>=0.4) ; sys_platform == \"win32\"", "httptools (>=0.6.3)
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "16e08fcfb2bb348693c462c761f6e59066e0b7f241df18035c9a93303d896bf1"
+content-hash = "098cecc7d286e62e1b4e78ba728da5f74ff37124014ae2505d8130c550dc9b50"
