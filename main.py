@@ -1,0 +1,1 @@
+from FinanceTrackerAPI import app
