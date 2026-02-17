@@ -56,6 +56,13 @@ class CategoryModel(BaseModel):
         orm_mode = True
         use_enum_values = True
 
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, value):
+        if not value:
+            raise ValueError("Name cannot be null.")
+        return value.lower()
+
 class DeleteBulk(BaseModel):
     category : str
 
@@ -100,4 +107,20 @@ class TransactionModelPatch(BaseModel):
         for tag in value:
             if len(tag) > 30:
                 raise ValueError("Tags cannot be more than 30 characters.")
+            
+class CategoryModelPatch(BaseModel):
+    name : Optional[str] = None
+    type : Optional[TypeCategory] = None
+    description : Optional[StrictStr] = Field(None, max_length = 500)
+
+    class Config:
+        orm_mode = True
+        use_enum_values = True
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, value):
+        if not value:
+            raise ValueError("Name cannot be null.")
+        return value.lower()
 
