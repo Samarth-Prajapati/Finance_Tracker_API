@@ -1,4 +1,4 @@
-from FinanceTrackerAPI.utils import transactions
+from FinanceTrackerAPI.utils import transactions, categories
 from bson import ObjectId
 
 class Transactions:
@@ -80,6 +80,7 @@ class Transactions:
         :param data: updated data
         :return: updated transaction data
         """
+
         try:
             result = self.transactions.update_one({"_id": ObjectId(obj_id)}, {"$set": data})
 
@@ -91,4 +92,68 @@ class Transactions:
         except Exception as error:
             print("Error while deleting transaction,", error)
 
+class Categories:
+    def __init__(self):
+        self.categories = categories
+
+    def create_categories(self, data):
+        """
+        Add category in Category Collection
+        :return: category data
+        """
+
+        try:
+            result = self.categories.insert_one(data)
+            return result
+
+        except Exception as error:
+            print("Error while creating category,", error)
+
+    def get_categories(self):
+        """
+        Get category data
+        :return: all category data
+        """
+
+        try:
+            result = self.categories.find({}, {"_id" : 0})
+            return result
+
+        except Exception as error:
+            print("Error while fetching all categories,", error)
+
+    def delete_category(self, name):
+        """
+        Delete category
+        :param name: category name
+        :return: None
+        """
+
+        try:
+            self.categories.delete_one({"name": str(name.lower())})
+            return True
+
+        except Exception as error:
+            print("Error while deleting category,", error)
+
+    def update_category(self, name, data):
+        """
+        Update category
+        :param name: category name
+        :param data: updated data
+        :return: updated category data
+        """
+
+        try:
+            result = self.categories.update_one({"name": str(name.lower())}, {"$set": data})
+
+            if result.matched_count == 0:
+                return None
+
+            return self.categories.find_one({"name" : str(name.lower())}, {"_id" : 0})
+
+        except Exception as error:
+            print("Error while deleting category,", error)
+
 transactions_commands = Transactions()
+categories_commands = Categories()
