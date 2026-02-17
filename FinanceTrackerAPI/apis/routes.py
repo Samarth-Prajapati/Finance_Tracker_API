@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status, HTTPException
-from FinanceTrackerAPI.apis import TransactionModel, DeleteBulk, TransactionModelPatch
-from FinanceTrackerAPI.utils import transactions_commands
+from FinanceTrackerAPI.apis import TransactionModel, DeleteBulk, TransactionModelPatch, CategoryModel, CategoryModelPatch
+from FinanceTrackerAPI.utils import transactions_commands, categories_commands
 
 app = FastAPI()
 
@@ -37,4 +37,29 @@ def update_transaction(obj_id, data : TransactionModelPatch):
         raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST)
 
     updated = transactions_commands.update_transaction(obj_id, updated_data)
+    return updated
+
+@app.post("/categories", status_code = status.HTTP_201_CREATED, tags = ["Categories"])
+def create_categories(data : CategoryModel):
+    categories_commands.create_categories(data.model_dump(mode = "json"))
+    return {"message" : "Categories created successfully."}
+
+@app.get("/categories", status_code = status.HTTP_200_OK, tags = ["Categories"])
+def get_categories():
+    data = categories_commands.get_categories()
+    return [category for category in data]
+
+@app.delete("/categories/{name}", status_code = status.HTTP_204_NO_CONTENT, tags = ["Categories"])
+def delete_categories(name):
+    categories_commands.delete_category(name)
+    return None
+
+@app.patch("/categories/{name}", status_code = status.HTTP_202_ACCEPTED, tags = ["Categories"])
+def update_categories(name, data : CategoryModelPatch):
+    updated_data = data.model_dump(exclude_unset = True)
+
+    if not updated_data:
+        raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST)
+
+    updated = categories_commands.update_category(name, updated_data)
     return updated
