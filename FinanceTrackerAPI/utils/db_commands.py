@@ -1,5 +1,6 @@
 from FinanceTrackerAPI.utils import transactions, categories
 from bson import ObjectId
+import datetime
 
 class Transactions:
     def __init__(self):
@@ -12,6 +13,10 @@ class Transactions:
         """
 
         try:
+            data["created_at"] = str(datetime.datetime.now())
+            data["updated_at"] = None
+            data["date"] = str(datetime.date.today())
+
             result = self.transactions.insert_one(data)
             return result
 
@@ -82,6 +87,7 @@ class Transactions:
         """
 
         try:
+            data["updated_at"] = str(datetime.datetime.now())
             result = self.transactions.update_one({"_id": ObjectId(obj_id)}, {"$set": data})
 
             if result.matched_count == 0:
@@ -90,7 +96,27 @@ class Transactions:
             return self.transactions.find_one({"_id" : ObjectId(obj_id)}, {"_id" : 0})
 
         except Exception as error:
-            print("Error while deleting transaction,", error)
+            print("Error while updating transaction,", error)
+
+    def search_transactions(self, query):
+        """
+        Search transactions
+        :param query: title or description string we want to search.
+        :return: search results
+        """
+
+        try:
+            search_filter = {
+                "$or": [
+                    {"title": {"$regex": query, "$options": "i"}},
+                    {"description": {"$regex": query, "$options": "i"}},
+                    {"category": {"$regex": query, "$options": "i"}}
+                ]
+            }
+            return list(self.transactions.find(search_filter, {"_id" : 0}))
+
+        except Exception as error:
+            print("Error while searching transaction,", error)
 
 class Categories:
     def __init__(self):
@@ -99,10 +125,13 @@ class Categories:
     def create_categories(self, data):
         """
         Add category in Category Collection
+        :param data : category_data
         :return: category data
         """
 
+
         try:
+            data["created_at"] = str(datetime.datetime.now())
             result = self.categories.insert_one(data)
             return result
 
