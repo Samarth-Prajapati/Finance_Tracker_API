@@ -1,6 +1,5 @@
 from pydantic import BaseModel, StrictStr, StrictFloat, Field, field_validator
 from typing import List, Optional
-import datetime
 from enum import Enum
 
 class TypeTransaction(Enum):
@@ -18,10 +17,7 @@ class TransactionModel(BaseModel):
     amount : StrictFloat = Field(..., gt = 0)
     type : TypeTransaction
     category : StrictStr
-    date : datetime.date
-    tags : List[str] = Field(..., max_length = 10)
-    created_at : datetime.datetime
-    updated_at : None
+    tags : List[str] = []
 
     class Config:
         orm_mode = True
@@ -42,15 +38,17 @@ class TransactionModel(BaseModel):
     @field_validator("tags")
     @classmethod
     def validate_tags(cls, value):
+        if len(value) > 10:
+            raise ValueError("Tags cannot be more than 10.")
         for tag in value:
             if len(tag) > 30:
                 raise ValueError("Tags cannot be more than 30 characters.")
+        return value
 
 class CategoryModel(BaseModel):
     name : StrictStr
     type : TypeCategory
     description : StrictStr = Field(..., max_length = 500)
-    created_at: datetime.datetime
 
     class Config:
         orm_mode = True
@@ -82,8 +80,7 @@ class TransactionModelPatch(BaseModel):
     amount : Optional[float] = Field(None, gt = 0)
     type : Optional[TypeTransaction] = None
     category : Optional[str] = None
-    tags : Optional[List[str]] = Field(None, max_length = 10)
-    updated_at : datetime.datetime
+    tags : Optional[List[str]] = []
 
     class Config:
         orm_mode = True
@@ -104,6 +101,8 @@ class TransactionModelPatch(BaseModel):
     @field_validator("tags")
     @classmethod
     def validate_tags(cls, value):
+        if len(value) > 10:
+            raise ValueError("Tags cannot be more than 10.")
         for tag in value:
             if len(tag) > 30:
                 raise ValueError("Tags cannot be more than 30 characters.")
